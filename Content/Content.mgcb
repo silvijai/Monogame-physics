@@ -1,0 +1,30 @@
+#----------------------------- Global Properties ----------------------------#
+
+/outputDir:bin/$(Platform)
+/intermediateDir:obj/$(Platform)
+/platform:DesktopGL
+/config:
+/profile:Reach
+/compress:False
+
+#---------------------------------- Content ---------------------------------#
+
+#begin Player/idle0.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Player/idle0.png
+
+#begin Player/idle1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Player/idle1.png
+
+#begin Player/idle2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:Player/idle2.png
+
+#begin ball.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/build:ball.png
