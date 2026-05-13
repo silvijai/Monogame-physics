@@ -7,10 +7,9 @@ namespace Physics_Game;
 public class Game1 : Game
 {
     private GraphicsDeviceManager _graphics;
-    private SpriteBatch _spriteBatch;
-    private Texture2D _whitePixel;
+    private SceneManager _sceneManager = new SceneManager();
 
-    private Player _player;
+    private Texture2D _whitePixel;
 
     public Game1()
     {
@@ -30,49 +29,33 @@ public class Game1 : Game
 
     protected override void LoadContent()
     {
-        _spriteBatch = new SpriteBatch(GraphicsDevice);
+        _sceneManager.LoadContent(new SpriteBatch(GraphicsDevice));
 
-        // Placeholder 1x1 white pixel for drawing coloured rectangles
         _whitePixel = new Texture2D(GraphicsDevice, 1, 1);
         _whitePixel.SetData(new[] { Color.White });
 
-        // Build player using ECS
-        _player = new Player(new Vector2(100, 300));
-        _player.Size = new Vector2(32, 48);
-        _player.AddComponent(new GravityComponent { GroundY = 650f });
-        _player.AddComponent(new SpriteRenderer(_whitePixel, Color.CornflowerBlue));
+        Entity player = new Player(new Vector2(100, 300), _whitePixel, _sceneManager);
+
+        var platform = new Entity(new Vector2(0, 650));
+        platform.Size = new Vector2(1280, 20);
+        platform.AddComponent(new SpriteRenderer(_whitePixel, Color.DarkGray));
+        var platformCollider = platform.AddComponent(new Collider("solid"));
+        _sceneManager.RegisterEntity(platform);
+        _sceneManager.CollisionManager.Register(platformCollider);
     }
 
     protected override void Update(GameTime gameTime)
     {
-        float speed = 200f;
-        float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        var kb = Keyboard.GetState();
-
-        if (kb.IsKeyDown(Keys.Escape)) Exit();
-        if (kb.IsKeyDown(Keys.Right)) _player.Position.X += speed * dt;
-        if (kb.IsKeyDown(Keys.Left))  _player.Position.X -= speed * dt;
-
-        // Jump
-        if (kb.IsKeyDown(Keys.Space))
-        {
-            var gravity = _player.GetComponent<GravityComponent>();
-            if (gravity != null && gravity.IsGrounded)
-                _player.Velocity.Y = -600f;
-        }
-
-        _player.Update(gameTime.ElapsedGameTime.TotalSeconds);
-
+        if (Keyboard.GetState().IsKeyDown(Keys.Escape)) Exit();
+        _sceneManager.Update(gameTime.ElapsedGameTime.TotalSeconds);
         base.Update(gameTime);
     }
 
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(Color.DeepPink);
+        GraphicsDevice.Clear(Color.Green);
 
-        _spriteBatch.Begin();
-        _player.Draw(_spriteBatch);
-        _spriteBatch.End();
+        _sceneManager.Draw(gameTime.ElapsedGameTime.TotalSeconds); 
 
         base.Draw(gameTime);
     }

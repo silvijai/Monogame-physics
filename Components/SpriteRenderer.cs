@@ -21,8 +21,8 @@ public class SpriteRenderer : Component
             new Rectangle(
                 (int)Entity.Position.X,
                 (int)Entity.Position.Y,
-                (int)Entity.Size.X,
-                (int)Entity.Size.Y),
+                (int)(Entity.Size.X * Entity.Scale.X),
+                (int)(Entity.Size.Y * Entity.Scale.Y)),
             Tint
         );
     }

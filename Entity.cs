@@ -40,10 +40,14 @@ public class Entity
 
     public void Update(double deltaTime)
     {
+        if (Velocity != Vector2.Zero) {
+            Position += Velocity * (float)deltaTime;
+        }
+
         if (!Active) return;
         foreach (var c in _components)
             if (c.Enabled) c.Update(deltaTime);
-    }
+    } 
 
     public void Draw(SpriteBatch spriteBatch)
     {
