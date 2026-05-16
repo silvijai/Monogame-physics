@@ -38,7 +38,7 @@ public class Game1 : Game
         var world = _sceneManager.World;
 
         // Triangle
-        var triangle = new Entity(1, "Triangle");
+        var triangle = new Entity(_sceneManager.NextId(), "Triangle");
         var triBody = triangle.AddComponent(new RigidBodyComponent(world, new Vector2(380, 300), false));
         triangle.AddComponent(new TransformComponent(new Vector2(380, 300), 0f));
         triangle.AddComponent(new ShapeComponent(world, triBody.Body,
@@ -47,7 +47,7 @@ public class Game1 : Game
         _sceneManager.RegisterEntity(triangle);
 
         // Box
-        var box = new Entity(2, "Box");
+        var box = new Entity(_sceneManager.NextId(), "Box");
         var boxBody = box.AddComponent(new RigidBodyComponent(world, new Vector2(400, 100), false));
         box.AddComponent(new TransformComponent(new Vector2(400, 100), 0f));
         box.AddComponent(new ShapeComponent(world, boxBody.Body,
@@ -56,7 +56,7 @@ public class Game1 : Game
         _sceneManager.RegisterEntity(box);
 
         // Ground left
-        var ground = new Entity(3, "Ground");
+        var ground = new Entity(_sceneManager.NextId(), "Ground");
         var gBody = ground.AddComponent(new RigidBodyComponent(world, new Vector2(40, 615), true));
         gBody.Body.Rotation = 0.1f;
         ground.AddComponent(new TransformComponent(new Vector2(40, 615), 0.1f));
@@ -66,7 +66,7 @@ public class Game1 : Game
         _sceneManager.RegisterEntity(ground);
 
         // Ground right
-        var ground2 = new Entity(4, "Ground2");
+        var ground2 = new Entity(_sceneManager.NextId(), "Ground2");
         var g2Body = ground2.AddComponent(new RigidBodyComponent(world, new Vector2(1240, 615), true));
         g2Body.Body.Rotation = -0.1f;
         ground2.AddComponent(new TransformComponent(new Vector2(1240, 615), -0.1f));
@@ -74,6 +74,8 @@ public class Game1 : Game
             new[] { new Vector2(-600,-15), new Vector2(600,-15), new Vector2(600,15), new Vector2(-600,15) },
             _whitePixel, Color.Green));
         _sceneManager.RegisterEntity(ground2); 
+
+        var player = new Player(new Vector2(30, 200), _sceneManager, _whitePixel);
     }
 
     protected override void Update(GameTime gameTime)

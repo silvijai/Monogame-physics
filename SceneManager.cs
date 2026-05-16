@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using nkast.Aether.Physics2D.Dynamics;
 using System.Collections.Generic;
+using System;
 
 namespace Physics_Game;
 
@@ -12,6 +13,10 @@ public class SceneManager
     private List<Entity> _entities = new List<Entity>();
 
     public World World { get; private set; }
+
+    private int _nextId = 0;
+
+    public int NextId() => _nextId++;
 
     public const float PixelsToMeters = 1f / 64f;
     public const float MetersToPixels = 64f;
@@ -31,24 +36,31 @@ public class SceneManager
     }
 
     public void Update(double deltaTime)
-    {
+    { 
+        foreach (var entity in _entities)
+        {
+            entity.Update(deltaTime);
+            entity.DebugPrint();
+        }
+
         World.Step((float)deltaTime);
 
         foreach (var entity in _entities)
         {
             entity.GetComponent<RigidBodyComponent>()?.SyncTransform();
-            entity.DebugPrint();
         }
     }
 
     public void Draw(double deltaTime)
     {
         _spriteBatch.Begin();
+
         foreach (var entity in _entities)
         {
             entity.Draw(_spriteBatch);
             entity.DebugDraw(_spriteBatch);
         }
+
         _spriteBatch.End();
     }
 }
