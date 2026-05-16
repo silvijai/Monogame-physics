@@ -1,39 +1,26 @@
 using Microsoft.Xna.Framework;
-using System;
+using nkast.Aether.Physics2D.Dynamics;
 
 namespace Physics_Game;
 
 public class RigidBodyComponent : Component
 {
-    public float Mass;
-    public float Restitution;
-    public float Friction;
-    public bool IsStatic;
+    public Body Body { get; private set; }
 
-    public float InverseMass => IsStatic || Mass <= 0f ? 0f : 1f / Mass;
-
-    public RigidBodyComponent( float mass = 1f, float restitution = 0.2f, float friction = 0.3f, bool isStatic = false )
+    public RigidBodyComponent(World world, Vector2 pixelPosition, bool isStatic)
     {
-        Mass = mass;
-        Restitution = restitution;
-        Friction = friction;
-        IsStatic = isStatic;
+        Body = world.CreateBody(
+            pixelPosition * SceneManager.PixelsToMeters,
+            0f,
+            isStatic ? BodyType.Static : BodyType.Dynamic
+        );
     }
 
-    public override void Update(double deltaTime)
+    public void SyncTransform()
     {
-        if (IsStatic) return;
-
         var t = Entity.GetComponent<TransformComponent>();
-        var v = Entity.GetComponent<VelocityComponent>();
-        if (t == null || v == null) return;
-
-        t.Position += v.Linear * (float)deltaTime;
-        t.Rotation += v.Angular * (float)deltaTime;
-    }
-
-    public override void DebugPrint()
-    {
-        Console.WriteLine($"  RigidBody  mass:{Mass:F1} inv:{InverseMass:F3} rest:{Restitution:F2} fric:{Friction:F2} static:{IsStatic}");
+        if (t == null) return;
+        t.Position = Body.Position * SceneManager.MetersToPixels;
+        t.Rotation = Body.Rotation;
     }
 }

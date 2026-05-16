@@ -1,33 +1,19 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
-using System;
-
 namespace Physics_Game;
+
+using Microsoft.Xna.Framework;
 
 public class TransformComponent : Component
 {
-    public Vector2 Position;
-    public float Rotation;
-    public Vector2 Scale; 
+    // Read-only to everything except RigidBodyComponent.SyncTransform()
+    // Do NOT set these manually — they are synced from Box2D every frame
+    public Vector2 Position { get; internal set; }
+    public float Rotation   { get; internal set; }
+    public Vector2 Scale    { get; set; } = Vector2.One;  // Box2D has no scale, so this is yours to own
 
-    public TransformComponent(Vector2 position, Vector2 scale, float rotation = 0f)
-    {
-        Position = position;
-        Rotation = rotation;
-        Scale = scale;
-    }
-
-    // defualt constructor, without scale defined
+    // Convenience — if you want to set initial position before first sync
     public TransformComponent(Vector2 position, float rotation = 0f)
     {
         Position = position;
         Rotation = rotation;
-        Scale = new Vector2(1f, 1f);
     }
-
-    // TODO add a DrawDebug() with the ability to display rotation visually
-
-    public override void DebugPrint()
-        => Console.WriteLine($"  Transform  pos:({Position.X:F1}, {Position.Y:F1})  rot:{MathHelper.ToDegrees(Rotation):F1}° sca:({Scale.X:F1}, {Scale.Y:F1})");
 }

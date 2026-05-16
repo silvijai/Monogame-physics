@@ -65,7 +65,7 @@ public class Entity
 
     public void DebugPrint()
     {
-        if (!Active) return;
+        if (!Active || !Debug) return;
         Console.WriteLine($"=== {Name} (id:{Id}) active:{Active} ===");
         foreach (var c in _components)
             if (c.Enabled && c.PrintDebug) c.DebugPrint();

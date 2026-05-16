@@ -8,7 +8,7 @@ namespace Physics_Game;
 public class Game1 : Game
 {
     private GraphicsDeviceManager _graphics;
-    private SceneManager _sceneManager = new SceneManager();
+    private SceneManager _sceneManager;
 
     private Texture2D _whitePixel;   
 
@@ -24,66 +24,63 @@ public class Game1 : Game
 
     protected override void Initialize()
     {
+        _sceneManager = new SceneManager(GraphicsDevice);
         _graphics.ApplyChanges();
         base.Initialize();
     }
 
     protected override void LoadContent()
     {
-        _sceneManager.LoadContent(new SpriteBatch(GraphicsDevice));
-
         _whitePixel = new Texture2D(GraphicsDevice, 1, 1);
         _whitePixel.SetData(new[] { Color.White });
+        _sceneManager.LoadContent(new SpriteBatch(GraphicsDevice), _whitePixel);
 
-        // debug triangle
+        var world = _sceneManager.World;
+
+        // Triangle
         var triangle = new Entity(1, "Triangle");
-
-        triangle.AddComponent(new TransformComponent(new Vector2(400, 300)));
-        triangle.AddComponent(new VelocityComponent());
-        triangle.AddComponent(new ShapeComponent(
-            new PolygonShape(new[]
-            {
-                new Vector2(  0, -60),
-                new Vector2( 50,  40),
-                new Vector2(-50,  40),
-            }),
-            _whitePixel,
-            Color.Cyan
-        ));
-
-        triangle.Debug = true;
-
+        var triBody = triangle.AddComponent(new RigidBodyComponent(world, new Vector2(380, 300), false));
+        triangle.AddComponent(new TransformComponent(new Vector2(380, 300), 0f));
+        triangle.AddComponent(new ShapeComponent(world, triBody.Body,
+            new[] { new Vector2(0,-60), new Vector2(50,40), new Vector2(-50,40) },
+            _whitePixel, Color.Cyan));
         _sceneManager.RegisterEntity(triangle);
 
-        // physics box
-        var box = new Entity(2, "Box");  // use a different id than the triangle
-        var tbox = box.AddComponent(new TransformComponent(new Vector2(400, 100), new Vector2(2, 2)));
-        box.AddComponent(new VelocityComponent());
-        box.AddComponent(new GravityComponent());       // updates velocity first
-        box.AddComponent(new RigidBodyComponent());     // then integrates into position
-        box.AddComponent(new ShapeComponent(
-            new PolygonShape(new[]
-            {
-                new Vector2(-30, -30),
-                new Vector2( 30, -30),
-                new Vector2( 30,  30),
-                new Vector2(-30,  30),
-            }),
-            _whitePixel,
-            Color.Yellow
-        ));
-
-        box.Debug = true;
-        tbox.PrintDebug = true;
-
+        // Box
+        var box = new Entity(2, "Box");
+        var boxBody = box.AddComponent(new RigidBodyComponent(world, new Vector2(400, 100), false));
+        box.AddComponent(new TransformComponent(new Vector2(400, 100), 0f));
+        box.AddComponent(new ShapeComponent(world, boxBody.Body,
+            new[] { new Vector2(-30,-30), new Vector2(30,-30), new Vector2(30,30), new Vector2(-30,30) },
+            _whitePixel, Color.Yellow));
         _sceneManager.RegisterEntity(box);
+
+        // Ground left
+        var ground = new Entity(3, "Ground");
+        var gBody = ground.AddComponent(new RigidBodyComponent(world, new Vector2(40, 615), true));
+        gBody.Body.Rotation = 0.1f;
+        ground.AddComponent(new TransformComponent(new Vector2(40, 615), 0.1f));
+        ground.AddComponent(new ShapeComponent(world, gBody.Body,
+            new[] { new Vector2(-600,-15), new Vector2(600,-15), new Vector2(600,15), new Vector2(-600,15) },
+            _whitePixel, Color.Green));
+        _sceneManager.RegisterEntity(ground);
+
+        // Ground right
+        var ground2 = new Entity(4, "Ground2");
+        var g2Body = ground2.AddComponent(new RigidBodyComponent(world, new Vector2(1240, 615), true));
+        g2Body.Body.Rotation = -0.1f;
+        ground2.AddComponent(new TransformComponent(new Vector2(1240, 615), -0.1f));
+        ground2.AddComponent(new ShapeComponent(world, g2Body.Body,
+            new[] { new Vector2(-600,-15), new Vector2(600,-15), new Vector2(600,15), new Vector2(-600,15) },
+            _whitePixel, Color.Green));
+        _sceneManager.RegisterEntity(ground2); 
     }
 
     protected override void Update(GameTime gameTime)
     {
         if (Keyboard.GetState().IsKeyDown(Keys.Escape)) Exit();
 
-        _sceneManager.Update(gameTime.ElapsedGameTime.TotalSeconds);
+        _sceneManager.Update(gameTime.ElapsedGameTime.TotalSeconds); 
 
         base.Update(gameTime);
     }
@@ -91,8 +88,8 @@ public class Game1 : Game
     protected override void Draw(GameTime gameTime)
     {
         GraphicsDevice.Clear(Color.Black);
- 
-        _sceneManager.Draw(gameTime.ElapsedGameTime.TotalSeconds); 
+
+        _sceneManager.Draw(gameTime.ElapsedGameTime.TotalSeconds);
 
         base.Draw(gameTime);
     }

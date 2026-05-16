@@ -32,6 +32,40 @@ public class PolygonShape : IShape
         return w;
     }
 
+    public IEnumerable<Vector2> GetAxes(TransformComponent t)
+    {
+        var verts = WorldVertices(t);
+
+        for (int i = 0; i < verts.Length; i++)
+        {
+            Vector2 a    = verts[i];
+            Vector2 b    = verts[(i + 1) % verts.Length];
+            Vector2 edge = b - a;
+
+            Vector2 normal = new Vector2(-edge.Y, edge.X);
+            normal.Normalize();
+
+            yield return normal;
+        }
+    }
+
+    public (float Min, float Max) Project(TransformComponent t, Vector2 axis)
+    {
+        var verts = WorldVertices(t);
+
+        float min = float.MaxValue;
+        float max = float.MinValue;
+
+        foreach (var v in verts)
+        {
+            float p = Vector2.Dot(v, axis);
+            if (p < min) min = p;
+            if (p > max) max = p;
+        }
+
+        return (min, max);
+    }
+
     public void DebugDraw(SpriteBatch sb, Texture2D pixel, TransformComponent t, Color color)
     {
         var verts = WorldVertices(t);

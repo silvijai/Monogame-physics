@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using nkast.Aether.Physics2D.Dynamics;
 using System.Collections.Generic;
 
 namespace Physics_Game;
@@ -7,40 +8,47 @@ namespace Physics_Game;
 public class SceneManager
 {
     private SpriteBatch _spriteBatch;
-    // public CollisionManager CollisionManager = new CollisionManager();
-
+    private Texture2D _pixel;
     private List<Entity> _entities = new List<Entity>();
+
+    public World World { get; private set; }
+
+    public const float PixelsToMeters = 1f / 64f;
+    public const float MetersToPixels = 64f;
+
+    public SceneManager(GraphicsDevice graphicsDevice)
+    {
+        World = new World(new Vector2(0f, 9.8f));
+    }
 
     public void RegisterEntity(Entity entity) => _entities.Add(entity);
     public void UnregisterEntity(Entity entity) => _entities.Remove(entity);
 
-    public void LoadContent(SpriteBatch spriteBatch)
+    public void LoadContent(SpriteBatch spriteBatch, Texture2D pixel)
     {
         _spriteBatch = spriteBatch;
-
+        _pixel = pixel;
     }
 
     public void Update(double deltaTime)
     {
-        for (int i = 0; i < _entities.Count; i++)
-        {
-            _entities[i].Update(deltaTime);
-            _entities[i].DebugPrint();
-        }
+        World.Step((float)deltaTime);
 
-        // CollisionManager.Update();
+        foreach (var entity in _entities)
+        {
+            entity.GetComponent<RigidBodyComponent>()?.SyncTransform();
+            entity.DebugPrint();
+        }
     }
 
     public void Draw(double deltaTime)
     {
         _spriteBatch.Begin();
-
-        for (int i = 0; i < _entities.Count; i++)
+        foreach (var entity in _entities)
         {
-            _entities[i].Draw(_spriteBatch);
-            _entities[i].DebugDraw(_spriteBatch);
+            entity.Draw(_spriteBatch);
+            entity.DebugDraw(_spriteBatch);
         }
-
-        _spriteBatch.End();        
+        _spriteBatch.End();
     }
 }
