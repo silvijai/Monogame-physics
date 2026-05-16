@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
+
+namespace Physics_Game;
 
 public interface IShape
 {
@@ -10,5 +11,5 @@ public interface IShape
     // Project yourself onto an axis and return the shadow interval
     // (float Min, float Max) Project(Vector2 position, float rotation, Vector2 axis);
 
-    void DebugDraw(SpriteBatch sb, Texture2D pixel, Vector2 position, float rotation, Color color);
+    void DebugDraw(SpriteBatch sb, Texture2D pixel, TransformComponent transform, Color color);
 }

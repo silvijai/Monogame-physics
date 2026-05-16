@@ -23,7 +23,7 @@ public class ShapeComponent : Component
         var transform = Entity.GetComponent<TransformComponent>();
         if (transform == null) return;
 
-        Shape.DebugDraw(spriteBatch, _pixel, transform.Position, transform.Rotation, DebugColor);
+        Shape.DebugDraw(spriteBatch, _pixel, transform, DebugColor);
     }
 
     public override void DebugPrint()

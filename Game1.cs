@@ -35,6 +35,7 @@ public class Game1 : Game
         _whitePixel = new Texture2D(GraphicsDevice, 1, 1);
         _whitePixel.SetData(new[] { Color.White });
 
+        // debug triangle
         var triangle = new Entity(1, "Triangle");
 
         triangle.AddComponent(new TransformComponent(new Vector2(400, 300)));
@@ -53,6 +54,29 @@ public class Game1 : Game
         triangle.Debug = true;
 
         _sceneManager.RegisterEntity(triangle);
+
+        // physics box
+        var box = new Entity(2, "Box");  // use a different id than the triangle
+        var tbox = box.AddComponent(new TransformComponent(new Vector2(400, 100), new Vector2(2, 2)));
+        box.AddComponent(new VelocityComponent());
+        box.AddComponent(new GravityComponent());       // updates velocity first
+        box.AddComponent(new RigidBodyComponent());     // then integrates into position
+        box.AddComponent(new ShapeComponent(
+            new PolygonShape(new[]
+            {
+                new Vector2(-30, -30),
+                new Vector2( 30, -30),
+                new Vector2( 30,  30),
+                new Vector2(-30,  30),
+            }),
+            _whitePixel,
+            Color.Yellow
+        ));
+
+        box.Debug = true;
+        tbox.PrintDebug = true;
+
+        _sceneManager.RegisterEntity(box);
     }
 
     protected override void Update(GameTime gameTime)

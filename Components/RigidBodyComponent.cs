@@ -1,3 +1,6 @@
+using Microsoft.Xna.Framework;
+using System;
+
 namespace Physics_Game;
 
 public class RigidBodyComponent : Component
@@ -17,7 +20,19 @@ public class RigidBodyComponent : Component
         IsStatic = isStatic;
     }
 
-    public override void PrintDebug()
+    public override void Update(double deltaTime)
+    {
+        if (IsStatic) return;
+
+        var t = Entity.GetComponent<TransformComponent>();
+        var v = Entity.GetComponent<VelocityComponent>();
+        if (t == null || v == null) return;
+
+        t.Position += v.Linear * (float)deltaTime;
+        t.Rotation += v.Angular * (float)deltaTime;
+    }
+
+    public override void DebugPrint()
     {
         Console.WriteLine($"  RigidBody  mass:{Mass:F1} inv:{InverseMass:F3} rest:{Restitution:F2} fric:{Friction:F2} static:{IsStatic}");
     }
