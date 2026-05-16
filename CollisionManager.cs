@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+/* using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 
 namespace Physics_Game;
@@ -23,8 +23,8 @@ public class CollisionManager
                 if (hit)
                 {
                     // If one is solid, resolve the non-solid one
-                    if (b.Tag == "solid") a.Resolve(b);
-                    else if (a.Tag == "solid") b.Resolve(a);
+                    if (b.Tag == "solid" && a.Tag != "solid") a.Resolve(b);
+                    else if (a.Tag == "solid" && b.Tag != "solid") b.Resolve(a);
                 }
 
                 a.ReportCollision(b, hit);
@@ -47,4 +47,4 @@ public class CollisionManager
     {
         return _colliders.FindAll(c => c.Tag == tag);
     }
-}
+}*/

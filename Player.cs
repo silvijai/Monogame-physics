@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+/*using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -13,6 +13,7 @@ public class Player : Entity
         Size = new Vector2(32, 48);
 
         AddComponent(new GravityComponent());
+        AddComponent(new RigidBody());
         AddComponent(new PlayerMovement()); 
         AddComponent(new SpriteRenderer(texture, Color.CornflowerBlue));
         var collider = AddComponent(new Collider("player"));
@@ -20,4 +21,4 @@ public class Player : Entity
         scene.RegisterEntity(this);
         scene.CollisionManager.Register(collider);
     }
-}
+}*/

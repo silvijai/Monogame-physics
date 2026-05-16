@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace Physics_Game;
 
@@ -9,7 +10,7 @@ public class Game1 : Game
     private GraphicsDeviceManager _graphics;
     private SceneManager _sceneManager = new SceneManager();
 
-    private Texture2D _whitePixel;
+    private Texture2D _whitePixel;   
 
     public Game1()
     {
@@ -34,27 +35,39 @@ public class Game1 : Game
         _whitePixel = new Texture2D(GraphicsDevice, 1, 1);
         _whitePixel.SetData(new[] { Color.White });
 
-        Entity player = new Player(new Vector2(100, 300), _whitePixel, _sceneManager);
+        var triangle = new Entity(1, "Triangle");
 
-        var platform = new Entity(new Vector2(0, 650));
-        platform.Size = new Vector2(1280, 20);
-        platform.AddComponent(new SpriteRenderer(_whitePixel, Color.DarkGray));
-        var platformCollider = platform.AddComponent(new Collider("solid"));
-        _sceneManager.RegisterEntity(platform);
-        _sceneManager.CollisionManager.Register(platformCollider);
+        triangle.AddComponent(new TransformComponent(new Vector2(400, 300)));
+        triangle.AddComponent(new VelocityComponent());
+        triangle.AddComponent(new ShapeComponent(
+            new PolygonShape(new[]
+            {
+                new Vector2(  0, -60),
+                new Vector2( 50,  40),
+                new Vector2(-50,  40),
+            }),
+            _whitePixel,
+            Color.Cyan
+        ));
+
+        triangle.Debug = true;
+
+        _sceneManager.RegisterEntity(triangle);
     }
 
     protected override void Update(GameTime gameTime)
     {
         if (Keyboard.GetState().IsKeyDown(Keys.Escape)) Exit();
+
         _sceneManager.Update(gameTime.ElapsedGameTime.TotalSeconds);
+
         base.Update(gameTime);
     }
 
     protected override void Draw(GameTime gameTime)
     {
-        GraphicsDevice.Clear(Color.Green);
-
+        GraphicsDevice.Clear(Color.Black);
+ 
         _sceneManager.Draw(gameTime.ElapsedGameTime.TotalSeconds); 
 
         base.Draw(gameTime);

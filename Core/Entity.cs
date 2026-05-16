@@ -1,25 +1,24 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using System;
 
 namespace Physics_Game;
 
 public class Entity
 {
-    // Core state — every entity has these
-    public Vector2 Position;
-    public Vector2 Velocity = Vector2.Zero;
-    public Vector2 Size = new Vector2(1f, 1f);
-    public Vector2 Scale = new Vector2(1f, 1f);
-    public float Rotation = 0f;
+    public readonly int Id;
+    public string Name;
     public bool Active = true;
+    public bool Debug = false;
 
     // Components
     private List<Component> _components = new List<Component>();
 
-    public Entity(Vector2 position)
+    public Entity(int id, string name = "Entity")
     {
-        Position = position;
+        Id = id;
+        Name = name;
     }
 
     // Add a component and return it (fluent style)
@@ -28,6 +27,11 @@ public class Entity
         component.Entity = this;
         _components.Add(component);
         return component;
+    }
+
+    public void RemoveComponent<T>(T component) where T: Component
+    {
+        _components.Remove(component);
     }
 
     // Get a component by type
@@ -40,10 +44,6 @@ public class Entity
 
     public void Update(double deltaTime)
     {
-        if (Velocity != Vector2.Zero) {
-            Position += Velocity * (float)deltaTime;
-        }
-
         if (!Active) return;
         foreach (var c in _components)
             if (c.Enabled) c.Update(deltaTime);
@@ -54,5 +54,20 @@ public class Entity
         if (!Active) return;
         foreach (var c in _components)
             if (c.Enabled) c.Draw(spriteBatch);
+    }
+
+    public void DebugDraw(SpriteBatch spriteBatch)
+    {
+        if (!Active) return; 
+        foreach (var c in _components)
+            if (c.Enabled && c.DrawDebug) c.DebugDraw(spriteBatch);
+    }
+
+    public void DebugPrint()
+    {
+        if (!Active) return;
+        Console.WriteLine($"=== {Name} (id:{Id}) active:{Active} ===");
+        foreach (var c in _components)
+            if (c.Enabled && c.PrintDebug) c.DebugPrint();
     }
 }

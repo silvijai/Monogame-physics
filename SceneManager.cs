@@ -7,7 +7,7 @@ namespace Physics_Game;
 public class SceneManager
 {
     private SpriteBatch _spriteBatch;
-    public CollisionManager CollisionManager = new CollisionManager();
+    // public CollisionManager CollisionManager = new CollisionManager();
 
     private List<Entity> _entities = new List<Entity>();
 
@@ -25,9 +25,10 @@ public class SceneManager
         for (int i = 0; i < _entities.Count; i++)
         {
             _entities[i].Update(deltaTime);
+            _entities[i].DebugPrint();
         }
 
-        CollisionManager.Update();
+        // CollisionManager.Update();
     }
 
     public void Draw(double deltaTime)
@@ -37,8 +38,9 @@ public class SceneManager
         for (int i = 0; i < _entities.Count; i++)
         {
             _entities[i].Draw(_spriteBatch);
+            _entities[i].DebugDraw(_spriteBatch);
         }
 
         _spriteBatch.End();        
-    }    
+    }
 }
