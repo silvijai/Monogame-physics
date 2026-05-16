@@ -38,8 +38,8 @@ public class PolygonShape : IShape
 
         for (int i = 0; i < verts.Length; i++)
         {
-            Vector2 a    = verts[i];
-            Vector2 b    = verts[(i + 1) % verts.Length];
+            Vector2 a = verts[i];
+            Vector2 b = verts[(i + 1) % verts.Length];
             Vector2 edge = b - a;
 
             Vector2 normal = new Vector2(-edge.Y, edge.X);

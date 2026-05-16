@@ -6,6 +6,7 @@
     <PublishReadyToRun>false</PublishReadyToRun>
     <TieredCompilation>false</TieredCompilation>
     <AssetTargetFallback>$(AssetTargetFallback);netstandard2.0</AssetTargetFallback>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -20,8 +21,7 @@
     <EmbeddedResource Include="Icon.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Aether.Physics2D.Diagnostics.MG" Version="2.2.0" />
-    <PackageReference Include="Aether.Physics2D.MG" Version="2.2.0" />
+    <PackageReference Include="Box2D.NET.Release" Version="3.1.0" />
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.4.*" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.4.*" />
   </ItemGroup>

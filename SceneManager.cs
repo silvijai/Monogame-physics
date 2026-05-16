@@ -1,8 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using nkast.Aether.Physics2D.Dynamics;
+using Box2D.NET.Bindings;
 using System.Collections.Generic;
-using System;
 
 namespace Physics_Game;
 
@@ -12,18 +11,19 @@ public class SceneManager
     private Texture2D _pixel;
     private List<Entity> _entities = new List<Entity>();
 
-    public World World { get; private set; }
+    public B2.WorldId WorldId { get; private set; }
 
     private int _nextId = 0;
-
     public int NextId() => _nextId++;
 
     public const float PixelsToMeters = 1f / 64f;
     public const float MetersToPixels = 64f;
 
-    public SceneManager(GraphicsDevice graphicsDevice)
+    public unsafe SceneManager(GraphicsDevice graphicsDevice)
     {
-        World = new World(new Vector2(0f, 9.8f));
+        var worldDef = B2.DefaultWorldDef();
+        worldDef.gravity = new B2.Vec2 { x = 0f, y = 9.8f };
+        WorldId = B2.CreateWorld(&worldDef);
     }
 
     public void RegisterEntity(Entity entity) => _entities.Add(entity);
@@ -36,31 +36,33 @@ public class SceneManager
     }
 
     public void Update(double deltaTime)
-    { 
+    {
         foreach (var entity in _entities)
         {
             entity.Update(deltaTime);
             entity.DebugPrint();
         }
 
-        World.Step((float)deltaTime);
+        B2.WorldStep(WorldId, (float)deltaTime, 4);
 
         foreach (var entity in _entities)
-        {
             entity.GetComponent<RigidBodyComponent>()?.SyncTransform();
-        }
     }
 
     public void Draw(double deltaTime)
     {
         _spriteBatch.Begin();
-
         foreach (var entity in _entities)
         {
             entity.Draw(_spriteBatch);
             entity.DebugDraw(_spriteBatch);
         }
-
         _spriteBatch.End();
     }
+
+    public void Dispose()
+    {
+        B2.DestroyWorld(WorldId);
+    }
 }
+

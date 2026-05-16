@@ -35,13 +35,13 @@ public class Game1 : Game
         _whitePixel.SetData(new[] { Color.White });
         _sceneManager.LoadContent(new SpriteBatch(GraphicsDevice), _whitePixel);
 
-        var world = _sceneManager.World;
+        var world = _sceneManager.WorldId;
 
         // Triangle
         var triangle = new Entity(_sceneManager.NextId(), "Triangle");
         var triBody = triangle.AddComponent(new RigidBodyComponent(world, new Vector2(380, 300), false));
-        triangle.AddComponent(new TransformComponent(new Vector2(380, 300), 0f));
-        triangle.AddComponent(new ShapeComponent(world, triBody.Body,
+        triangle.AddComponent(new TransformComponent(new Vector2(380, 300)));
+        triangle.AddComponent(new ShapeComponent(world, triBody.BodyId,
             new[] { new Vector2(0,-60), new Vector2(50,40), new Vector2(-50,40) },
             _whitePixel, Color.Cyan));
         _sceneManager.RegisterEntity(triangle);
@@ -49,28 +49,26 @@ public class Game1 : Game
         // Box
         var box = new Entity(_sceneManager.NextId(), "Box");
         var boxBody = box.AddComponent(new RigidBodyComponent(world, new Vector2(400, 100), false));
-        box.AddComponent(new TransformComponent(new Vector2(400, 100), 0f));
-        box.AddComponent(new ShapeComponent(world, boxBody.Body,
+        box.AddComponent(new TransformComponent(new Vector2(400, 100)));
+        box.AddComponent(new ShapeComponent(world, boxBody.BodyId,
             new[] { new Vector2(-30,-30), new Vector2(30,-30), new Vector2(30,30), new Vector2(-30,30) },
             _whitePixel, Color.Yellow));
         _sceneManager.RegisterEntity(box);
 
         // Ground left
         var ground = new Entity(_sceneManager.NextId(), "Ground");
-        var gBody = ground.AddComponent(new RigidBodyComponent(world, new Vector2(40, 615), true));
-        gBody.Body.Rotation = 0.1f;
-        ground.AddComponent(new TransformComponent(new Vector2(40, 615), 0.1f));
-        ground.AddComponent(new ShapeComponent(world, gBody.Body,
+        var gBody = ground.AddComponent(new RigidBodyComponent(world, new Vector2(40, 615), true, 0.1f));
+        ground.AddComponent(new TransformComponent(new Vector2(40, 615)));
+        ground.AddComponent(new ShapeComponent(world, gBody.BodyId,
             new[] { new Vector2(-600,-15), new Vector2(600,-15), new Vector2(600,15), new Vector2(-600,15) },
             _whitePixel, Color.Green));
         _sceneManager.RegisterEntity(ground);
 
         // Ground right
         var ground2 = new Entity(_sceneManager.NextId(), "Ground2");
-        var g2Body = ground2.AddComponent(new RigidBodyComponent(world, new Vector2(1240, 615), true));
-        g2Body.Body.Rotation = -0.1f;
-        ground2.AddComponent(new TransformComponent(new Vector2(1240, 615), -0.1f));
-        ground2.AddComponent(new ShapeComponent(world, g2Body.Body,
+        var g2Body = ground2.AddComponent(new RigidBodyComponent(world, new Vector2(1240, 615), true, -0.1f));
+        ground2.AddComponent(new TransformComponent(new Vector2(1240, 615)));
+        ground2.AddComponent(new ShapeComponent(world, g2Body.BodyId,
             new[] { new Vector2(-600,-15), new Vector2(600,-15), new Vector2(600,15), new Vector2(-600,15) },
             _whitePixel, Color.Green));
         _sceneManager.RegisterEntity(ground2); 

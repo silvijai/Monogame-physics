@@ -1,7 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using nkast.Aether.Physics2D.Dynamics;
-using System;
+using Box2D.NET.Bindings;
 
 namespace Physics_Game;
 
@@ -14,38 +13,38 @@ public class CharacterMovement : Component
     public override void Update(double deltaTime)
     {
         var rb = Entity.GetComponent<RigidBodyComponent>();
-        if (rb == null) { return; }
+        if (rb == null) return;
 
-        var kb = Keyboard.GetState();
-        var vel = rb.Body.LinearVelocity;
+        var kb  = Keyboard.GetState();
+        var vel = rb.LinearVelocity;
 
-        if (kb.IsKeyDown(Keys.Right) || kb.IsKeyDown(Keys.D)) vel.X =  _moveSpeed;
-        else if (kb.IsKeyDown(Keys.Left) || kb.IsKeyDown(Keys.A)) vel.X = -_moveSpeed;
-        else vel.X = 0f;
+        if      (kb.IsKeyDown(Keys.Right) || kb.IsKeyDown(Keys.D)) vel.x =  _moveSpeed;
+        else if (kb.IsKeyDown(Keys.Left)  || kb.IsKeyDown(Keys.A)) vel.x = -_moveSpeed;
+        else    vel.x = 0f;
 
-        rb.Body.LinearVelocity = vel;
+        rb.LinearVelocity = vel;
 
         _isGrounded = CheckGrounded(rb);
 
         if ((kb.IsKeyDown(Keys.Space) || kb.IsKeyDown(Keys.W)) && _isGrounded)
-        {
-            rb.Body.LinearVelocity = new Vector2(vel.X, -_jumpImpulse);
-        }
+            rb.LinearVelocity = new B2.Vec2 { x = vel.x, y = -_jumpImpulse };
     }
 
-    private bool CheckGrounded(RigidBodyComponent rb)
+    private unsafe bool CheckGrounded(RigidBodyComponent rb)
     {
-        bool grounded = false;
-        var start = rb.Body.Position;
-        var end = start + new Vector2(0f, 0.55f);
+        var pos         = B2.BodyGetPosition(rb.BodyId);
+        var translation = new B2.Vec2 { x = 0f, y = 0.55f };
+        var filter      = B2.DefaultQueryFilter();
 
-        rb.Body.World.RayCast((fixture, point, normal, fraction) =>
+        var result = B2.WorldCastRayClosest(rb.WorldId, pos, translation, filter);
+
+        if (result.hit)
         {
-            if (fixture.Body == rb.Body) return -1f;
-            grounded = true;
-            return 0f;
-        }, start, end);
+            var hitBody = B2.ShapeGetBody(result.shapeId);
+            if (!hitBody.Equals(rb.BodyId))
+                return true;
+        }
 
-        return grounded;
+        return false;
     }
 }

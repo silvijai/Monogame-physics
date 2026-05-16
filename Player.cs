@@ -1,22 +1,22 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using nkast.Aether.Physics2D.Dynamics;
+using Box2D.NET.Bindings;
 
 namespace Physics_Game;
 
 public class Player : Entity
 {
     public int Health = 100;
-    private RigidBodyComponent _rb;
+    public RigidBodyComponent Rb { get; private set; }
 
-    public Player(Vector2 position, SceneManager scene, Texture2D pixel) : base(scene.NextId(), "Player")
+    public Player(Vector2 position, SceneManager scene, Texture2D pixel)
+        : base(scene.NextId(), "Player")
     {
-        _rb = this.AddComponent(new RigidBodyComponent(scene.World, position, false));
-        _rb.Body.FixedRotation = true;
-        
+        Rb = this.AddComponent(new RigidBodyComponent(scene.WorldId, position, false));
+        Rb.SetFixedRotation(true);
+
         this.AddComponent(new TransformComponent(position, 0f));
-        this.AddComponent(new ShapeComponent(scene.World, _rb.Body,
+        this.AddComponent(new ShapeComponent(scene.WorldId, Rb.BodyId,
             new[] { new Vector2(-20,-30), new Vector2(20,-30), new Vector2(20,30), new Vector2(-20,30) },
             pixel, Color.Pink));
         this.AddComponent(new CharacterMovement());
@@ -24,3 +24,4 @@ public class Player : Entity
         scene.RegisterEntity(this);
     }
 }
+

@@ -1,7 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using nkast.Aether.Physics2D.Dynamics;
-using nkast.Aether.Physics2D.Common;
+using Box2D.NET.Bindings;
 using System;
 
 namespace Physics_Game;
@@ -12,21 +11,34 @@ public class ShapeComponent : Component
     private readonly Texture2D _pixel;
     public Color Color { get; }
 
-    public ShapeComponent(World world, Body body, Vector2[] localVerts,
-                          Texture2D pixel, Color color,
-                          float density = 1f, float friction = 0.3f, float restitution = 0.1f)
+    public unsafe ShapeComponent(B2.WorldId worldId, B2.BodyId bodyId, Vector2[] localVerts,
+                                 Texture2D pixel, Color color,
+                                 float density = 1f, float friction = 0.3f, float restitution = 0.1f)
     {
         _localVerts = localVerts;
         _pixel = pixel;
         Color = color;
 
-        var verts = new Vertices();
-        foreach (var v in localVerts)
-            verts.Add(v * SceneManager.PixelsToMeters);
+        var b2Verts = new B2.Vec2[localVerts.Length];
+        for (int i = 0; i < localVerts.Length; i++)
+            b2Verts[i] = new B2.Vec2
+            {
+                x = localVerts[i].X * SceneManager.PixelsToMeters,
+                y = localVerts[i].Y * SceneManager.PixelsToMeters
+            };
 
-        var fixture = body.CreatePolygon(verts, density);
-        fixture.Friction = friction;
-        fixture.Restitution = restitution;
+        B2.Hull hull;
+        fixed (B2.Vec2* vp = b2Verts)
+            hull = B2.ComputeHull(vp, localVerts.Length);
+
+        var polygon = B2.MakePolygon(&hull, 0f);
+
+        var shapeDef = B2.DefaultShapeDef();
+        shapeDef.density     = density;
+        shapeDef.material.friction    = friction;
+        shapeDef.material.restitution = restitution;
+
+        B2.CreatePolygonShape(bodyId, &shapeDef, &polygon);
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -34,7 +46,6 @@ public class ShapeComponent : Component
         var t = Entity.GetComponent<TransformComponent>();
         if (t == null) return;
 
-        // Transform each vertex by position + rotation, then draw edges
         var worldVerts = new Vector2[_localVerts.Length];
         float cos = MathF.Cos(t.Rotation);
         float sin = MathF.Sin(t.Rotation);
@@ -48,7 +59,6 @@ public class ShapeComponent : Component
             );
         }
 
-        // Draw edges
         for (int i = 0; i < worldVerts.Length; i++)
         {
             var a = worldVerts[i];
