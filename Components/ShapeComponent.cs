@@ -11,9 +11,7 @@ public class ShapeComponent : Component
     private readonly Texture2D _pixel;
     public Color Color { get; }
 
-    public unsafe ShapeComponent(B2.WorldId worldId, B2.BodyId bodyId, Vector2[] localVerts,
-                                 Texture2D pixel, Color color,
-                                 float density = 1f, float friction = 0.3f, float restitution = 0.1f)
+    public unsafe ShapeComponent(B2.WorldId worldId, B2.BodyId bodyId, Vector2[] localVerts, Texture2D pixel, Color color, float density = 1f, float friction = 0.3f, float restitution = 0.1f)
     {
         _localVerts = localVerts;
         _pixel = pixel;

@@ -9,6 +9,7 @@ public class Game1 : Game
 {
     private GraphicsDeviceManager _graphics;
     private SceneManager _sceneManager;
+    private InputManager _input;
 
     private Texture2D _whitePixel;   
 
@@ -25,6 +26,7 @@ public class Game1 : Game
     protected override void Initialize()
     {
         _sceneManager = new SceneManager(GraphicsDevice);
+        _input = new InputManager();
         _graphics.ApplyChanges();
         base.Initialize();
     }
