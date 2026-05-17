@@ -8,7 +8,6 @@ public class CharacterMovement : Component
 {
     private float _moveSpeed = 5f;
     private float _jumpImpulse = 8f;
-    private bool _isGrounded = false;
 
     public override void Update(double deltaTime)
     {

@@ -10,6 +10,7 @@ public class Game1 : Game
     private GraphicsDeviceManager _graphics;
     private SceneManager _sceneManager;
     private InputManager _input;
+    private InputDebugger _inputDebug;
 
     private Texture2D _whitePixel;   
 
@@ -27,6 +28,7 @@ public class Game1 : Game
     {
         _sceneManager = new SceneManager(GraphicsDevice);
         _input = new InputManager();
+        _inputDebug = new InputDebugger();
         _graphics.ApplyChanges();
         base.Initialize();
     }
@@ -73,7 +75,7 @@ public class Game1 : Game
         ground2.AddComponent(new ShapeComponent(world, g2Body.BodyId,
             new[] { new Vector2(-600,-15), new Vector2(600,-15), new Vector2(600,15), new Vector2(-600,15) },
             _whitePixel, Color.Green));
-        _sceneManager.RegisterEntity(ground2); 
+        _sceneManager.RegisterEntity(ground2);
 
         var player = new Player(new Vector2(30, 200), _sceneManager, _whitePixel);
     }
@@ -82,7 +84,8 @@ public class Game1 : Game
     {
         if (Keyboard.GetState().IsKeyDown(Keys.Escape)) Exit();
 
-        _sceneManager.Update(gameTime.ElapsedGameTime.TotalSeconds); 
+        _sceneManager.Update(gameTime.ElapsedGameTime.TotalSeconds);
+        _inputDebug.Update(gameTime.ElapsedGameTime.TotalSeconds);
 
         base.Update(gameTime);
     }
