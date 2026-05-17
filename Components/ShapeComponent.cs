@@ -34,9 +34,10 @@ public class ShapeComponent : Component
         var polygon = B2.MakePolygon(&hull, 0f);
 
         var shapeDef = B2.DefaultShapeDef();
-        shapeDef.density     = density;
-        shapeDef.material.friction    = friction;
+        shapeDef.density = density;
+        shapeDef.material.friction = friction;
         shapeDef.material.restitution = restitution;
+        shapeDef.enableContactEvents = true;
 
         B2.CreatePolygonShape(bodyId, &shapeDef, &polygon);
     }

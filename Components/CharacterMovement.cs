@@ -24,27 +24,7 @@ public class CharacterMovement : Component
 
         rb.LinearVelocity = vel;
 
-        _isGrounded = CheckGrounded(rb);
-
-        if ((kb.IsKeyDown(Keys.Space) || kb.IsKeyDown(Keys.W)) && _isGrounded)
+        if ((kb.IsKeyDown(Keys.Space) || kb.IsKeyDown(Keys.W)) && rb.IsGrounded)
             rb.LinearVelocity = new B2.Vec2 { x = vel.x, y = -_jumpImpulse };
-    }
-
-    private unsafe bool CheckGrounded(RigidBodyComponent rb)
-    {
-        var pos         = B2.BodyGetPosition(rb.BodyId);
-        var translation = new B2.Vec2 { x = 0f, y = 0.55f };
-        var filter      = B2.DefaultQueryFilter();
-
-        var result = B2.WorldCastRayClosest(rb.WorldId, pos, translation, filter);
-
-        if (result.hit)
-        {
-            var hitBody = B2.ShapeGetBody(result.shapeId);
-            if (!hitBody.Equals(rb.BodyId))
-                return true;
-        }
-
-        return false;
     }
 }
